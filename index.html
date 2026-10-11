@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#0A2342">
+    <meta name="description" content="Vem Comigo Social — conectando corações na fé.">
+    <title>Vem Comigo Social 🙏</title>
+    <link rel="manifest" href="manifest.webmanifest">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+        :root {
+            --azul-escuro: #0A2342;
+            --dourado: #F9B800;
+            --dourado-claro: #FFD600;
+            --branco: #FFFFFF;
+            --azul-suave: #133461;
+        }
+        body { background: var(--azul-escuro); color: var(--branco); min-height: 100vh; padding-bottom: 78px; }
+        .cabecalho { background: var(--azul-suave); padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
+        .logo { display: flex; align-items: center; gap: 8px; }
+        .logo h1 { font-size: 18px; color: var(--dourado); }
+        .icone-luz { background: linear-gradient(135deg, var(--dourado), var(--dourado-claro)); color: var(--azul-escuro); border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 16px; }
+        .sino-notificacao { font-size: 20px; cursor: pointer; position: relative; }
+        .badge { position: absolute; top: -6px; right: -6px; background: red; color: white; font-size: 10px; border-radius: 50%; width: 16px; height: 16px; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+        .aviso-notificacoes { background: var(--azul-suave); margin: 12px; padding: 14px; border-radius: 12px; border: 1px solid var(--dourado); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .btn-permitir { background: linear-gradient(135deg, var(--dourado), var(--dourado-claro)); color: var(--azul-escuro); border: none; padding: 8px 16px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 14px; }
+        .btn-agora-nao { background: transparent; color: var(--branco); border: none; padding: 8px 12px; cursor: pointer; font-size: 13px; text-decoration: underline; opacity: 0.7; }
+        .versiculo { background: var(--azul-suave); margin: 12px; padding: 16px; border-radius: 12px; border-left: 3px solid var(--dourado); text-align: center; }
+        .versiculo p { font-style: italic; font-size: 15px; }
+        .post { background: var(--azul-suave); margin: 12px; border-radius: 12px; overflow: hidden; }
+        .post-cabecalho { padding: 12px; display: flex; align-items: center; gap: 10px; }
+        .post-nome { font-weight: bold; color: var(--dourado); }
+        .post-conteudo { padding: 0 12px 12px; }
+        .post-acoes { padding: 8px 12px 12px; display: flex; gap: 20px; flex-wrap: wrap; }
+        .btn-acao { cursor: pointer; font-size: 14px; }
+        .btn-acao:hover { color: var(--dourado); }
+        .mensagem-luz { background: linear-gradient(135deg, var(--dourado), var(--dourado-claro)); color: var(--azul-escuro); margin: 12px; padding: 14px; border-radius: 12px; display: flex; gap: 12px; align-items: flex-start; }
+        .luz-texto p { font-weight: bold; margin-bottom: 4px; }
+        .bblia-container { background: var(--azul-suave); margin: 12px; border-radius: 12px; padding: 16px; }
+        .bblia-livros { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+        .btn-livro { background: var(--dourado); color: var(--azul-escuro); border: none; padding: 6px 12px; border-radius: 16px; cursor: pointer; font-weight: bold; font-size: 13px; }
+        .btn-livro.ativo { background: var(--branco); }
+        .bblia-texto { line-height: 1.8; font-size: 16px; }
+        .bblia-capitulos { display: flex; gap: 8px; margin: 12px 0; flex-wrap: wrap; }
+        .btn-capitulo { background: transparent; color: var(--dourado); border: 1px solid var(--dourado); padding: 4px 10px; border-radius: 4px; cursor: pointer; }
+        .btn-capitulo.ativo { background: var(--dourado); color: var(--azul-escuro); }
+        .navegacao { position: fixed; bottom: 0; left: 0; right: 0; background: var(--azul-suave); display: flex; justify-content: space-around; padding: 10px 0 max(10px, env(safe-area-inset-bottom)); border-top: 1px solid rgba(249,184,0,0.3); z-index: 100; overflow-x: auto; }
+        .nav-item { text-align: center; cursor: pointer; font-size: 10px; color: var(--branco); transition: 0.2s; position: relative; min-width: 55px; }
+        .nav-item.ativo { color: var(--dourado); }
+        .nav-icone { font-size: 20px; margin-bottom: 2px; }
+        .tela { display: none; padding: 12px; }
+        .tela.ativa { display: block; }
+        .tela-entrada { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 80vh; text-align: center; padding: 20px; }
+        .tela-entrada h1 { color: var(--dourado); font-size: 28px; margin-bottom: 10px; }
+        .tela-entrada p { margin-bottom: 30px; opacity: 0.8; }
+        .btn { background: linear-gradient(135deg, var(--dourado), var(--dourado-claro)); color: var(--azul-escuro); border: none; padding: 12px 30px; border-radius: 25px; font-size: 16px; font-weight: bold; cursor: pointer; margin: 6px; width: 220px; }
+        .btn.secundario { background: transparent; border: 2px solid var(--dourado); color: var(--dourado); }
+        @media (min-width: 768px) {
+            body { max-width: 500px; margin: 0 auto; box-shadow: 0 0 20px rgba(0,0,0,0.3); }
+        }
+
+        .splash-vcs{position:fixed;inset:0;z-index:9999;background:#0A2342;display:flex;align-items:center;justify-content:center}
+        .splash-vcs img{width:100%;height:100%;object-fit:cover}
+        .splash-acoes{position:absolute;left:0;right:0;bottom:42px;display:flex;justify-content:center;gap:10px;padding:0 20px}
+        .splash-btn{border:0;border-radius:999px;padding:12px 22px;font-weight:800;cursor:pointer;background:linear-gradient(135deg,var(--dourado),var(--dourado-claro));color:var(--azul-escuro);box-shadow:0 8px 25px rgba(0,0,0,.28)}
+        .splash-btn.sec{background:rgba(10,35,66,.82);color:#fff;border:1px solid rgba(255,214,0,.55)}
+        .campanha-card{margin:12px;border-radius:16px;overflow:hidden;background:var(--azul-suave);border:1px solid rgba(249,184,0,.26)}
+        .campanha-card img{width:100%;display:block}
+        .campanha-corpo{padding:14px}
+        .campanha-corpo h3{color:var(--dourado);margin-bottom:6px}
+        .campanha-corpo p{font-size:14px;line-height:1.5;opacity:.9}
+        .instalar-btn{margin-top:12px;background:linear-gradient(135deg,var(--dourado),var(--dourado-claro));color:var(--azul-escuro);border:none;border-radius:22px;padding:10px 16px;font-weight:800;cursor:pointer}
+
+
+        .auth-box{width:min(92vw,390px);background:rgba(19,52,97,.96);border:1px solid rgba(249,184,0,.28);border-radius:18px;padding:20px;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+        .auth-box h2{color:var(--dourado);margin-bottom:6px}
+        .auth-sub{font-size:13px;opacity:.78;margin-bottom:16px}
+        .campo{width:100%;padding:12px 13px;margin:6px 0;border-radius:10px;border:1px solid rgba(255,255,255,.12);background:#0d294d;color:#fff;outline:none}
+        .campo:focus{border-color:var(--dourado)}
+        .auth-actions{display:grid;gap:8px;margin-top:10px}
+        .auth-msg{min-height:20px;font-size:12px;margin-top:8px;color:#ffe28a}
+        .user-chip{display:flex;align-items:center;gap:8px;font-size:12px}
+        .avatar-mini{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--dourado),var(--dourado-claro));color:var(--azul-escuro);display:grid;place-items:center;font-weight:900}
+        .btn-sair{background:transparent;border:1px solid rgba(249,184,0,.45);color:var(--dourado);border-radius:16px;padding:6px 10px;cursor:pointer;font-size:11px}
+        .composer{background:var(--azul-suave);margin:12px;border-radius:14px;padding:14px;border:1px solid rgba(249,184,0,.18)}
+        .composer textarea{width:100%;min-height:88px;resize:vertical;background:#0d294d;color:#fff;border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:12px;outline:none}
+        .composer textarea:focus{border-color:var(--dourado)}
+        .composer-footer{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:10px}
+        .status-line{font-size:12px;opacity:.72}
+        .feed-real-label{display:inline-flex;gap:6px;align-items:center;background:rgba(249,184,0,.12);color:var(--dourado);padding:5px 9px;border-radius:999px;font-size:11px;font-weight:700}
+        .post-data{font-size:11px;opacity:.58;margin-top:2px}
+        .empty-feed{text-align:center;padding:28px 14px;opacity:.72}
+        .perfil-form{display:grid;gap:8px;background:var(--azul-suave);padding:14px;border-radius:12px;margin-top:12px}
+        .perfil-form label{font-size:12px;color:var(--dourado)}
+
+    </style>
+</head>
+<body>
+
+
+<div id="splash-vcs" class="splash-vcs">
+    <img src="assets/boas-vindas.png" alt="Vem Comigo Social — Conectando corações na fé">
+    <div class="splash-acoes">
+        <button class="splash-btn" onclick="fecharSplash()">Começar agora</button>
+        <button class="splash-btn sec" onclick="mostrarCampanha()">Conhecer</button>
+    </div>
+</div>
+
+<div id="tela-entrada" class="tela-entrada">
+    <div class="auth-box">
+        <h2>Vem Comigo Social</h2>
+        <div class="auth-sub">Conectando corações na fé 🙏✨</div>
+
+        <input id="auth-nome" class="campo" placeholder="Seu nome (para criar conta)">
+        <input id="auth-email" class="campo" type="email" placeholder="Seu e-mail">
+        <input id="auth-senha" class="campo" type="password" placeholder="Sua senha">
+
+        <div class="auth-actions">
+            <button class="btn" style="width:100%;margin:0" onclick="entrarConta()">Entrar</button>
+            <button class="btn secundario" style="width:100%;margin:0" onclick="criarConta()">Criar Conta</button>
+        </div>
+        <div id="auth-msg" class="auth-msg"></div>
+
+        <div style="margin-top:16px;background:rgba(249,184,0,.09);padding:12px;border-radius:10px">
+            <p style="color:var(--dourado);font-weight:bold;margin-bottom:5px;">🤝 Irmã Luz</p>
+            <p style="font-size:13px;opacity:.86;">Entre para compartilhar fé, louvores, orações e mensagens com a comunidade.</p>
+        </div>
+    </div>
+</div>
+
+<div id="tela-principal" style="display: none;">
+    <div class="cabecalho">
+        <div class="logo"><h1>Vem Comigo Social</h1></div>
+        <div style="display:flex;align-items:center;gap:10px;">
+            <div class="sino-notificacao" title="Notificações" onclick="mostrarNotificacoes()">🔔<span id="contador-notif" class="badge" style="display:none;">3</span></div>
+            <div class="user-chip">
+                <div id="header-avatar" class="avatar-mini">VC</div>
+                <span id="header-nome">Usuário</span>
+                <button class="btn-sair" onclick="sairConta()">Sair</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="aviso-notif" class="aviso-notificacoes">
+        <span>🔔 Deseja receber avisos de mensagens, orações e avisos?</span>
+        <div>
+            <button class="btn-permitir" onclick="pedirPermissaoNotificacoes()">Sim, permitir!</button>
+            <button class="btn-agora-nao" onclick="fecharAvisoNotif()">Agora não</button>
+        </div>
+    </div>
+
+    <div class="mensagem-luz">
+        <div class="icone-luz">☀️</div>
+        <div class="luz-texto">
+            <p>Oi! Seja bem-vindo(a)! ✨</p>
+            <span>Que alegria te ver aqui! A Palavra de Deus está com você. Vamos crescer juntos na fé? 🙏💛 — Irmã Luz</span>
+        </div>
+    </div>
+
+    <div class="versiculo">
+        <strong>📖 Versículo do Dia</strong>
+        <p style="margin-top: 8px;">"Porque onde estiverem dois ou três reunidos em meu nome, ali estou eu no meio deles."</p>
+        <span style="font-size: 12px; opacity: 0.7;">— Mateus 18:20</span>
+    </div>
+
+    <div id="conteudo">
+        <div id="pagina-inicio" class="tela ativa">
+            <h3 style="margin: 10px 0; color: var(--dourado);">✨ Praça da Família</h3>
+            <div class="composer">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:9px">
+                    <strong>Compartilhe algo que edifica ✨</strong>
+                    <span class="feed-real-label">● ONLINE</span>
+                </div>
+                <textarea id="post-texto" maxlength="1000" placeholder="Escreva uma mensagem, testemunho, versículo ou palavra de fé..."></textarea>
+                <div class="composer-footer">
+                    <span id="post-status" class="status-line">Até 1000 caracteres</span>
+                    <button class="btn-permitir" onclick="publicarPost()">Publicar</button>
+                </div>
+            </div>
+            <div id="feed-real"></div>
+
+            <div class="campanha-card">
+                <img src="assets/lancamento.png" alt="Chegou o Vem Comigo Social">
+                <div class="campanha-corpo">
+                    <h3>Chegou o Vem Comigo Social</h3>
+                    <p>Uma comunidade cristã jovem para compartilhar fé, louvores, orações, mensagens e momentos que edificam.</p>
+                </div>
+            </div>
+            <div class="campanha-card" id="campanha-sobre">
+                <img src="assets/sobre.png" alt="Uma rede social diferente, feita com fé">
+                <div class="campanha-corpo">
+                    <h3>Uma rede social diferente, feita com fé</h3>
+                    <p>Orações, louvores, vídeos, mensagens e a nossa família em Cristo, tudo no mesmo lugar.</p>
+                </div>
+            </div>
+            <div class="campanha-card">
+                <img src="assets/instalar.png" alt="Salve na tela inicial">
+                <div class="campanha-corpo">
+                    <h3>Instale no celular</h3>
+                    <p>Abra pelo navegador e use “Adicionar à tela inicial” ou “Instalar app”.</p>
+                    <button class="instalar-btn" id="btn-instalar-pwa" style="display:none;">Instalar Vem Comigo Social</button>
+                </div>
+            </div>
+
+            <div style="margin:18px 12px 8px;font-size:11px;opacity:.55">EXEMPLOS DA COMUNIDADE</div>
+            <div class="post">
+                <div class="post-cabecalho">
+                    <div style="width:40px;height:40px;background:var(--dourado);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#0A2342;font-weight:bold;">M</div>
+                    <div><div class="post-nome">Maria Silva</div><div style="font-size:12px;opacity:0.6;">há 2 horas</div></div>
+                </div>
+                <div class="post-conteudo">Bom dia, família! Que a paz de Deus esteja com todos hoje! 🙏✨ Deus é fiel!</div>
+                <div class="post-acoes">
+                    <span class="btn-acao">❤️ Louvar</span><span class="btn-acao">💬 Comentar</span><span class="btn-acao">🔗 Compartilhar</span><span class="btn-acao">🙏 Orar</span>
+                </div>
+            </div>
+            <div class="post">
+                <div class="post-cabecalho">
+                    <div style="width:40px;height:40px;background:var(--dourado);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#0A2342;font-weight:bold;">J</div>
+                    <div><div class="post-nome">João Cristo</div><div style="font-size:12px;opacity:0.6;">há 4 horas</div></div>
+                </div>
+                <div class="post-conteudo">Louvai ao Senhor, porque Ele é bom! O Seu amor dura para sempre! 🎶🙌</div>
+                <div class="post-acoes">
+                    <span class="btn-acao">❤️ 28</span><span class="btn-acao">💬 5</span><span class="btn-acao">🔗 Compartilhar</span><span class="btn-acao">🙏 Orando</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="pagina-mensagens" class="tela">
+            <h3 style="margin: 10px 0; color: var(--dourado);">💬 Minhas Mensagens</h3>
+            <div style="background:var(--azul-suave);padding:14px;border-radius:10px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;">
+                <div><strong style="color:var(--dourado);">Maria Silva</strong><br><span style="font-size:13px;">Paz do Senhor, irmão! 🙏</span></div><span style="font-size:11px;opacity:0.6;">10:30</span>
+            </div>
+            <div style="background:var(--azul-suave);padding:14px;border-radius:10px;display:flex;justify-content:space-between;align-items:center;">
+                <div><strong style="color:var(--dourado);">João Cristo</strong><br><span style="font-size:13px;">Amém! Deus abençoe!</span></div><span style="font-size:11px;opacity:0.6;">Ontem</span>
+            </div>
+        </div>
+
+        <div id="pagina-biblia" class="tela">
+            <h3 style="margin: 10px 0; color: var(--dourado);">📖 Bíblia Sagrada</h3>
+            <div class="bblia-container">
+                <div class="bblia-livros">
+                    <button class="btn-livro ativo" onclick="selecionarLivro('genesis', this)">Gênesis</button>
+                    <button class="btn-livro" onclick="selecionarLivro('exodo', this)">Êxodo</button>
+                    <button class="btn-livro" onclick="selecionarLivro('salmos', this)">Salmos</button>
+                    <button class="btn-livro" onclick="selecionarLivro('mateus', this)">Mateus</button>
+                    <button class="btn-livro" onclick="selecionarLivro('joao', this)">João</button>
+                    <button class="btn-livro" onclick="selecionarLivro('romanos', this)">Romanos</button>
+                    <button class="btn-livro" onclick="selecionarLivro('apocalipse', this)">Apocalipse</button>
+                </div>
+                <div class="bblia-capitulos" id="capitulos-lista">
+                    <button class="btn-capitulo ativo">1</button><button class="btn-capitulo">2</button><button class="btn-capitulo">3</button><button class="btn-capitulo">4</button><button class="btn-capitulo">5</button>
+                </div>
+                <div class="bblia-texto" id="texto-biblia">
+                    <strong style="color: var(--dourado);">Gênesis 1</strong><br><br>
+                    1 No princípio criou Deus os céus e a terra.<br><br>
+                    2 E a terra estava desordenada e vazia, e as trevas cobriam a face do abismo; e o Espírito de Deus se movia sobre a face das águas.<br><br>
+                    3 E disse Deus: Haja luz. E houve luz.<br><br>
+                    4 E viu Deus que a luz era boa; e separou Deus a luz das trevas.<br><br>
+                    5 E chamou à luz Dia, e às trevas Noite. E foi a tarde e a manhã: o dia primeiro. ✨
+                </div>
+            </div>
+            <div class="mensagem-luz" style="margin-top: 16px;">
+                <div class="icone-luz">☀️</div>
+                <div><p>A Palavra é luz! ✨</p><span>"Lâmpada para os meus pés é a tua palavra, e luz para o meu caminho." — Salmo 119:105 🙏</span></div>
+            </div>
+        </div>
+
+        <div id="pagina-oracoes" class="tela">
+            <h3 style="margin: 10px 0; color: var(--dourado);">🙏 Pedidos de Oração</h3>
+            <div style="background:var(--azul-suave);padding:14px;border-radius:10px;margin-bottom:10px;">
+                <strong style="color:var(--dourado);">Ana Costa</strong>
+                <p style="margin:8px 0;">Peço oração pela saúde da minha mãe. Que Deus toque o coração e o corpo dela. Amém! 🙏</p>
+                <button style="background:var(--dourado);color:#0A2342;border:none;padding:6px 12px;border-radius:15px;font-weight:bold;cursor:pointer;" onclick="enviarNotificacao('🙏 Oração', 'Alguém está orando por você! Que Deus te abençoe! ✨')">🤲 Estou Orando (18)</button>
+            </div>
+            <div style="background:var(--azul-suave);padding:14px;border-radius:10px;">
+                <strong style="color:var(--dourado);">Pedro Santos ✨ Testemunho</strong>
+                <p style="margin:8px 0;">Deus abençoou meu trabalho! Eu pedi e Ele ouviu! Toda honra e glória a Deus! 🙌🎉</p>
+            </div>
+        </div>
+
+        <div id="pagina-videos" class="tela">
+            <h3 style="margin: 10px 0; color: var(--dourado);">🎬 Vídeos Curtos</h3>
+            <div class="mensagem-luz"><div class="icone-luz">☀️</div><div><p>Lembre-se! ✨</p><span>Aqui só compartilhamos conteúdo que edifica e glorifica a Deus. Obrigada por cuidar da nossa família! 💛</span></div></div>
+            <p style="text-align:center;margin-top:40px;opacity:0.7;">Em breve seus vídeos aparecerão aqui! 🙏✨</p>
+        </div>
+
+        <div id="pagina-play" class="tela">
+            <h3 style="margin: 10px 0; color: var(--dourado);">🎵 Vem Comigo Play</h3>
+            <p style="text-align:center;margin:20px 0;opacity:0.8;">Ouça nossos louvores aqui! 🎧</p>
+            <div style="background:var(--azul-suave);padding:14px;border-radius:10px;margin-bottom:10px;display:flex;align-items:center;gap:12px;">
+                <span style="font-size:24px;">▶️</span><div><strong style="color:var(--dourado);">No Tempo de Deus</strong><br><span style="font-size:13px;">Ingrid & Bianca</span></div>
+            </div>
+            <div style="background:var(--azul-suave);padding:14px;border-radius:10px;display:flex;align-items:center;gap:12px;">
+                <span style="font-size:24px;">▶️</span><div><strong style="color:var(--dourado);">Deus Cuidou de Mim</strong><br><span style="font-size:13px;">Ingrid & Bianca</span></div>
+            </div>
+        </div>
+
+        <div id="pagina-perfil" class="tela">
+            <h3 style="margin: 10px 0; color: var(--dourado);">👤 Meu Perfil</h3>
+            <div style="text-align:center;padding:20px;">
+                <div style="width:80px;height:80px;background:linear-gradient(135deg,var(--dourado),var(--dourado-claro));border-radius:50%;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:30px;color:var(--azul-escuro);">👤</div>
+                <h2 style="color:var(--dourado);">Seu Nome Aqui</h2>
+                <p style="font-style:italic;opacity:0.7;margin:8px 0;">"Jeremias 29:11" ✨</p>
+                <div style="display:flex;justify-content:center;gap:30px;margin-top:20px;text-align:center;">
+                    <div><div style="font-size:20px;font-weight:bold;color:var(--dourado);">0</div><div style="font-size:12px;">Postagens</div></div>
+                    <div><div style="font-size:20px;font-weight:bold;color:var(--dourado);">0</div><div style="font-size:12px;">Seguidores</div></div>
+                    <div><div style="font-size:20px;font-weight:bold;color:var(--dourado);">0</div><div style="font-size:12px;">Seguindo</div></div>
+                </div>
+            </div>
+            
+            <div class="perfil-form">
+                <label>Nome público</label>
+                <input id="perfil-nome" class="campo" placeholder="Seu nome">
+                <label>Bio</label>
+                <textarea id="perfil-bio" class="campo" rows="3" placeholder="Conte um pouco sobre você"></textarea>
+                <label>Versículo favorito</label>
+                <input id="perfil-versiculo" class="campo" placeholder="Ex.: Jeremias 29:11">
+                <button class="btn-permitir" onclick="salvarPerfil()">Salvar perfil</button>
+                <div id="perfil-status" class="status-line"></div>
+            </div>
+
+<div style="background:var(--azul-suave);padding:16px;border-radius:10px;margin-top:20px;">
+                <h4 style="color:var(--dourado);margin-bottom:10px;">📜 Regras da Comunidade</h4>
+                <p style="font-size:13px;line-height:1.6;">✅ Compartilhe apenas conteúdo evangélico e edificante<br>✅ Respeite todos como irmãos<br>❌ Violações = aviso → período de estudos → bloqueio sem nova conta<br>📖 Bíblia sempre disponível para ler e meditar<br>🔔 Notificações para não perder nenhuma oração ou mensagem<br>🤝 <strong>Irmã Luz</strong> nos guia com amor e alegria!</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="navegacao">
+        <div class="nav-item ativo" onclick="trocarPagina('inicio', this)"><div class="nav-icone">🏠</div><div>Início</div></div>
+        <div class="nav-item" onclick="trocarPagina('mensagens', this)"><div class="nav-icone">💬</div><div>Mensagens</div></div>
+        <div class="nav-item" onclick="trocarPagina('biblia', this)"><div class="nav-icone">📖</div><div>Bíblia</div></div>
+        <div class="nav-item" onclick="trocarPagina('oracoes', this)"><div class="nav-icone">🙏</div><div>Orações</div></div>
+        <div class="nav-item" onclick="trocarPagina('videos', this)"><div class="nav-icone">🎥</div><div>Vídeos</div></div>
+        <div class="nav-item" onclick="trocarPagina('play', this)"><div class="nav-icone">🎵</div><div>Play</div></div>
+        <div class="nav-item" onclick="trocarPagina('perfil', this)"><div class="nav-icone">👤</div><div>Perfil</div></div>
+    </div>
+</div>
+
+<script>
+    let swRegistration = null;
+
+    async function registrarServiceWorker() {
+        if ('serviceWorker' in navigator) {
+            try {
+                swRegistration = await navigator.serviceWorker.register('./sw.js');
+            } catch (e) {
+                console.warn('Service Worker não registrado:', e);
+            }
+        }
+    }
+
+    function entrar() {
+        document.getElementById('tela-entrada').style.display = 'none';
+        document.getElementById('tela-principal').style.display = 'block';
+        verificarPermissaoNotif();
+    }
+
+    function trocarPagina(nomePagina, elemento) {
+        document.querySelectorAll('#conteudo > div').forEach(pagina => pagina.classList.remove('ativa'));
+        document.getElementById('pagina-' + nomePagina).classList.add('ativa');
+        document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('ativo'));
+        elemento.classList.add('ativo');
+    }
+
+    function verificarSuporteNotif() {
+        return 'Notification' in window;
+    }
+
+    function verificarPermissaoNotif() {
+        if (!verificarSuporteNotif()) return;
+        if (Notification.permission === 'granted') {
+            fecharAvisoNotif();
+            mostrarBadgeNotificacoes();
+        } else if (Notification.permission === 'denied') {
+            fecharAvisoNotif();
+        }
+    }
+
+    async function pedirPermissaoNotificacoes() {
+        if (!verificarSuporteNotif()) {
+            alert('Seu navegador não suporta notificações. Tente usar o Chrome ou Edge! 🙏');
+            return;
+        }
+        const permissao = await Notification.requestPermission();
+        if (permissao === 'granted') {
+            fecharAvisoNotif();
+            mostrarBadgeNotificacoes();
+            await enviarNotificacao('✅ Notificações ativadas!', 'Você receberá avisos enquanto esta versão estiver ativa. O push com o app fechado será ligado ao backend depois. 🙏✨');
+        } else {
+            alert('Sem problema! Você pode ativar depois nas configurações do navegador. 😊');
+            fecharAvisoNotif();
+        }
+    }
+
+    async function enviarNotificacao(titulo, mensagem) {
+        if (Notification.permission !== 'granted') return;
+        try {
+            const reg = swRegistration || (await navigator.serviceWorker.ready);
+            await reg.showNotification(titulo, {
+                body: mensagem,
+                icon: './icon-192.png',
+                badge: './icon-192.png',
+                tag: 'vem-comigo-social'
+            });
+        } catch (e) {
+            new Notification(titulo, { body: mensagem });
+        }
+    }
+
+    function mostrarBadgeNotificacoes() {
+        const badge = document.getElementById('contador-notif');
+        if (badge) badge.style.display = 'flex';
+    }
+
+    function fecharAvisoNotif() {
+        const aviso = document.getElementById('aviso-notif');
+        if (aviso) aviso.style.display = 'none';
+    }
+
+    function mostrarNotificacoes() {
+        alert('🔔 Você tem 3 notificações:\n\n💬 Mensagem de Maria Silva\n🙏 Novo pedido de oração\n📖 Versículo do dia disponível!\n\nO push real com o app fechado entra quando conectarmos o backend. ✨');
+    }
+
+    function selecionarLivro(livro, botao) {
+        document.querySelectorAll('.btn-livro').forEach(btn => btn.classList.remove('ativo'));
+        if (botao) botao.classList.add('ativo');
+
+        const textos = {
+            'genesis': ['Gênesis 1', 'No princípio criou Deus os céus e a terra. E a terra estava desordenada e vazia...'],
+            'exodo': ['Êxodo 20', 'E falou Deus todas estas palavras, dizendo: Eu sou o Senhor teu Deus...'],
+            'salmos': ['Salmo 23', 'O Senhor é o meu pastor; nada me faltará. Em lugares de verde pasto me faz descansar...'],
+            'mateus': ['Mateus 5', 'Bem-aventurados os pobres em espírito, porque deles é o reino dos céus...'],
+            'joao': ['João 3', 'Porque Deus amou o mundo de tal maneira que deu o seu Filho unigênito...'],
+            'romanos': ['Romanos 8', 'E sei que todas as coisas contribuem juntamente para o bem daqueles que amam a Deus...'],
+            'apocalipse': ['Apocalipse 21', 'E vi um novo céu e uma nova terra; porque o primeiro céu e a primeira terra passaram...']
+        };
+
+        const [titulo, conteudo] = textos[livro];
+        document.getElementById('texto-biblia').innerHTML = `<strong style="color: var(--dourado);">${titulo}</strong><br><br>${conteudo}`;
+    }
+
+
+    function fecharSplash(){
+        const splash=document.getElementById('splash-vcs');
+        if(splash) splash.style.display='none';
+    }
+    function mostrarCampanha(){
+        fecharSplash();
+        document.getElementById('tela-entrada').style.display='none';
+        document.getElementById('tela-principal').style.display='block';
+        const card=document.getElementById('campanha-sobre');
+        if(card) setTimeout(()=>card.scrollIntoView({behavior:'smooth',block:'start'}),120);
+    }
+    let deferredInstallPrompt=null;
+    window.addEventListener('beforeinstallprompt',(e)=>{
+        e.preventDefault();
+        deferredInstallPrompt=e;
+        const b=document.getElementById('btn-instalar-pwa');
+        if(b) b.style.display='inline-block';
+    });
+    document.addEventListener('click', async (e)=>{
+        if(e.target && e.target.id==='btn-instalar-pwa' && deferredInstallPrompt){
+            deferredInstallPrompt.prompt();
+            try{await deferredInstallPrompt.userChoice;}catch(_){}
+            deferredInstallPrompt=null;
+            e.target.style.display='none';
+        }
+    });
+
+    registrarServiceWorker();
+</script>
+
+<script src="./config.js"></script>
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+const cfg = window.VCS_CONFIG || {};
+const configured = cfg.SUPABASE_URL && cfg.SUPABASE_ANON_KEY &&
+                   !cfg.SUPABASE_URL.includes('COLE_AQUI') &&
+                   !cfg.SUPABASE_ANON_KEY.includes('COLE_AQUI');
+
+let supabase = null;
+let currentUser = null;
+let currentProfile = null;
+
+function msg(text, error=false){
+  const el=document.getElementById('auth-msg');
+  if(el){el.textContent=text||'';el.style.color=error?'#ffb7b7':'#ffe28a';}
+}
+
+function initials(name){
+  return (name||'VC').split(/\s+/).slice(0,2).map(x=>x[0]||'').join('').toUpperCase() || 'VC';
+}
+
+async function ensureConfigured(){
+  if(configured) return true;
+  msg('Falta configurar o Supabase no arquivo config.js.', true);
+  return false;
+}
+
+async function garantirPerfil(){
+  if(!supabase || !currentUser) return;
+
+  const {data: existente, error: erroBusca} = await supabase
+    .from('profiles')
+    .select('id')
+    .eq('id', currentUser.id)
+    .maybeSingle();
+
+  if(erroBusca){
+    console.warn('Erro ao verificar perfil:', erroBusca);
+    return;
+  }
+
+  if(!existente){
+    const nome =
+      currentUser.user_metadata?.display_name ||
+      currentUser.email?.split('@')[0] ||
+      'Membro';
+
+    const {error: erroCriar} = await supabase
+      .from('profiles')
+      .insert({
+        id: currentUser.id,
+        display_name: nome
+      });
+
+    if(erroCriar){
+      console.warn('Erro ao criar perfil:', erroCriar);
+    }
+  }
+}
+
+async function carregarPerfil(){
+  if(!supabase || !currentUser) return;
+  const {data,error}=await supabase.from('profiles').select('*').eq('id',currentUser.id).maybeSingle();
+  if(error){console.warn(error);return;}
+  currentProfile=data;
+  const name=data?.display_name || currentUser.email?.split('@')[0] || 'Usuário';
+  document.getElementById('header-nome').textContent=name;
+  document.getElementById('header-avatar').textContent=initials(name);
+  const pn=document.getElementById('perfil-nome'); if(pn) pn.value=data?.display_name||'';
+  const pb=document.getElementById('perfil-bio'); if(pb) pb.value=data?.bio||'';
+  const pv=document.getElementById('perfil-versiculo'); if(pv) pv.value=data?.verse||'';
+  const title=document.querySelector('#pagina-perfil h2'); if(title) title.textContent=name;
+  const verseEl=document.querySelector('#pagina-perfil p[style*="font-style:italic"]');
+  if(verseEl && data?.verse) verseEl.textContent=`"${data.verse}" ✨`;
+}
+
+async function carregarFeed(){
+  const root=document.getElementById('feed-real');
+  if(!root || !supabase) return;
+  root.innerHTML='<div class="empty-feed">Carregando publicações...</div>';
+  const {data,error}=await supabase
+    .from('posts')
+    .select('id,content,created_at,user_id,profiles(display_name)')
+    .order('created_at',{ascending:false})
+    .limit(50);
+  if(error){
+    root.innerHTML='<div class="empty-feed">Erro ao carregar o feed.</div>';
+    console.warn(error);
+    return;
+  }
+  if(!data?.length){
+    root.innerHTML='<div class="empty-feed">Ainda não há publicações. Seja o primeiro a compartilhar algo! 🙏</div>';
+    return;
+  }
+  root.innerHTML=data.map(post=>{
+    const name=post.profiles?.display_name || 'Membro';
+    const when=new Date(post.created_at).toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'});
+    const safe=(post.content||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+    return `<div class="post">
+      <div class="post-cabecalho">
+        <div class="avatar-mini">${initials(name)}</div>
+        <div><div class="post-nome">${name}</div><div class="post-data">${when}</div></div>
+      </div>
+      <div class="post-conteudo">${safe.replace(/\n/g,'<br>')}</div>
+      <div class="post-acoes">
+        <span class="btn-acao">❤️ Louvar</span>
+        <span class="btn-acao">💬 Comentar</span>
+        <span class="btn-acao">🔗 Compartilhar</span>
+        <span class="btn-acao">🙏 Orar</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+window.criarConta = async function(){
+  if(!await ensureConfigured()) return;
+  const nome=document.getElementById('auth-nome').value.trim();
+  const email=document.getElementById('auth-email').value.trim();
+  const senha=document.getElementById('auth-senha').value;
+  if(!nome || !email || senha.length<6){msg('Preencha nome, e-mail e senha com pelo menos 6 caracteres.',true);return;}
+  msg('Criando sua conta...');
+  const {data,error}=await supabase.auth.signUp({
+    email,password:senha,
+    options:{data:{display_name:nome}}
+  });
+  if(error){msg(error.message,true);return;}
+  if(data.session){
+    msg('Conta criada! Entrando...');
+  }else{
+    msg('Conta criada. Se o Supabase exigir confirmação, confira seu e-mail.');
+  }
+};
+
+window.entrarConta = async function(){
+  if(!await ensureConfigured()) return;
+  const email=document.getElementById('auth-email').value.trim();
+  const senha=document.getElementById('auth-senha').value;
+  if(!email || !senha){msg('Digite e-mail e senha.',true);return;}
+  msg('Entrando...');
+  const {error}=await supabase.auth.signInWithPassword({email,password:senha});
+  if(error){msg(error.message,true);return;}
+  msg('');
+};
+
+window.sairConta = async function(){
+  if(supabase) await supabase.auth.signOut();
+};
+
+window.publicarPost = async function(){
+  if(!supabase || !currentUser) return;
+  const ta=document.getElementById('post-texto');
+  const status=document.getElementById('post-status');
+  const content=ta.value.trim();
+  if(!content){status.textContent='Escreva alguma coisa antes de publicar.';return;}
+  status.textContent='Publicando...';
+  const {error}=await supabase.from('posts').insert({user_id:currentUser.id,content});
+  if(error){status.textContent='Erro: '+error.message;return;}
+  ta.value='';
+  status.textContent='Publicado! 🙏';
+  await carregarFeed();
+};
+
+window.salvarPerfil = async function(){
+  if(!supabase || !currentUser) return;
+  const display_name=document.getElementById('perfil-nome').value.trim();
+  const bio=document.getElementById('perfil-bio').value.trim();
+  const verse=document.getElementById('perfil-versiculo').value.trim();
+  const st=document.getElementById('perfil-status');
+  st.textContent='Salvando...';
+  const {error}=await supabase.from('profiles').update({display_name,bio,verse}).eq('id',currentUser.id);
+  if(error){st.textContent='Erro: '+error.message;return;}
+  st.textContent='Perfil salvo.';
+  await carregarPerfil();
+};
+
+async function mostrarApp(session){
+  currentUser=session?.user||null;
+  if(currentUser){
+    document.getElementById('tela-entrada').style.display='none';
+    document.getElementById('tela-principal').style.display='block';
+    const splash=document.getElementById('splash-vcs'); if(splash) splash.style.display='none';
+    await garantirPerfil();
+    await carregarPerfil();
+    await carregarFeed();
+    if(window.verificarPermissaoNotif) window.verificarPermissaoNotif();
+  }else{
+    document.getElementById('tela-principal').style.display='none';
+    document.getElementById('tela-entrada').style.display='flex';
+  }
+}
+
+async function init(){
+  if(!configured){
+    msg('Antes de usar: abra config.js e cole a URL e a chave anon do Supabase.',true);
+    return;
+  }
+  supabase=createClient(cfg.SUPABASE_URL,cfg.SUPABASE_ANON_KEY);
+  const {data:{session}}=await supabase.auth.getSession();
+  await mostrarApp(session);
+  supabase.auth.onAuthStateChange(async (_event,session)=>{await mostrarApp(session);});
+}
+
+init();
+</script>
+
+</body>
+</html>
