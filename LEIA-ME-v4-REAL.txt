@@ -1,0 +1,67 @@
+VEM COMIGO SOCIAL v4 REAL — ETAPA 1
+NETLIFY + SUPABASE
+
+O QUE JÁ FUNCIONA NESTE PACOTE
+- Criar conta real com e-mail/senha.
+- Entrar e sair.
+- Sessão persistente.
+- Perfil salvo no banco.
+- Criar post de texto.
+- Feed carregado do Supabase.
+- Segurança RLS.
+- PWA e artes da versão anterior preservadas.
+
+PASSO A PASSO
+
+1) CRIAR PROJETO NO SUPABASE
+- Entre em https://supabase.com
+- Crie um projeto novo.
+- Guarde a senha do banco.
+
+2) CRIAR AS TABELAS
+- Abra SQL Editor no Supabase.
+- Cole todo o conteúdo de SUPABASE-SETUP.sql.
+- Clique em Run.
+
+3) PEGAR URL E CHAVE PÚBLICA
+- No Supabase, abra Project Settings / API (ou Connect/API Keys, conforme a interface).
+- Copie:
+  Project URL
+  anon/public key
+- Abra config.js e substitua:
+  COLE_AQUI_A_URL_DO_SUPABASE
+  COLE_AQUI_A_CHAVE_ANON_PUBLICA
+
+NUNCA coloque service_role key no site.
+
+4) AUTH
+- Em Authentication, confira Email provider.
+- Se "Confirm email" estiver ligado, o usuário precisa confirmar o e-mail antes de entrar.
+- Para teste rápido você pode ajustar essa opção no painel do Supabase.
+
+5) NETLIFY
+- Envie a pasta inteira para o Netlify em Deploy manually.
+- Não envie só index.html.
+- O site precisa manter:
+  index.html
+  config.js
+  manifest.webmanifest
+  sw.js
+  assets/
+  icon-192.png
+  icon-512.png
+  _redirects
+  netlify.toml
+
+PRÓXIMA ETAPA
+- Foto do perfil.
+- Upload de imagem no post.
+- Curtidas.
+- Comentários.
+- Pedidos de oração reais.
+
+
+ATUALIZAÇÃO v4.1
+- Não usa mais trigger no Supabase.
+- O próprio site cria o perfil automaticamente no primeiro login.
+- Requer a policy profiles_insert_own, que já foi criada no SQL Editor.

@@ -1,0 +1,23 @@
+{
+  "name": "Vem Comigo Social",
+  "short_name": "Vem Comigo",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0A2342",
+  "theme_color": "#0A2342",
+  "description": "Rede social cristã jovem — conectando corações na fé.",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
