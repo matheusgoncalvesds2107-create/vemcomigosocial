@@ -1,0 +1,9 @@
+VEM COMIGO SOCIAL v5 REAL COMPLETO
+
+1. No Supabase > SQL Editor, rode SUPABASE-v5-ATUALIZACAO.sql.
+2. Depois envie TODOS os arquivos desta pasta ao GitHub vemcomigosocial.
+3. O Render fará o deploy automaticamente.
+
+Incluído: avatar, post com imagem, curtidas, comentários, seguir, orações, botão Estou orando, mensagens privadas, notificações internas, perfil e PWA.
+
+Para testar mensagens/seguir/notificações, crie uma segunda conta.
