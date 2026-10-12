@@ -1,0 +1,15 @@
+VEM COMIGO+ v6 REAL
+
+1. Rode SUPABASE-v6-FUNCOES-REAIS.sql no Supabase.
+2. Depois envie os arquivos desta pasta ao GitHub do Vem Comigo+.
+3. O Render atualiza automaticamente.
+
+FUNÇÕES REAIS:
+- Orações + Estou orando
+- Podcast com upload MP3 + player
+- Testemunhos salvos no Supabase
+- Palavra/devocional salvo no Supabase
+- Louvores com upload MP3 + player
+- Feed, curtidas, comentários, seguidores, mensagens, notificações, perfil
+
+Atenção: nesta v6, usuários autenticados podem publicar áudio. Depois podemos restringir Podcast/Louvores a administradores/artistas verificados.
